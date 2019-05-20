@@ -1,8 +1,8 @@
-
 from rply import LexerGenerator
+
 try:
     import rpython.rlib.rsre.rsre_re as re
-except:    
+except:
     import re
 
 lg = LexerGenerator()
@@ -11,7 +11,7 @@ lg = LexerGenerator()
 lg.add('FLOAT', '-?\d+\.\d+')
 lg.add('INTEGER', '-?\d+')
 lg.add('STRING', '(""".*?""")|(".*?")|(\'.*?\')')
-#lg.add('PRINT', 'print(?!\w)') # put this before variable which would otherwise match
+# lg.add('PRINT', 'print(?!\w)') # put this before variable which would otherwise match
 lg.add('BOOLEAN', "true(?!\w)|false(?!\w)")
 lg.add('IF', 'if(?!\w)')
 lg.add('ELSE', 'else(?!\w)')
@@ -77,25 +77,25 @@ lg.ignore('[ \t\r\f\v]+')
 
 lexer = lg.build()
 
-def lex(source):
 
+def lex(source):
     comments = r'(#.*)(?:\n|\Z)'
     multiline = r'([\s]+)(?:\n)'
-    
-    comment = re.search(comments,source)
+
+    comment = re.search(comments, source)
     while comment is not None:
         start, end = comment.span(1)
         assert start >= 0 and end >= 0
-        source = source[0:start] + source[end:] #remove string part that was a comment
-        comment = re.search(comments,source)
+        source = source[0:start] + source[end:]  # remove string part that was a comment
+        comment = re.search(comments, source)
 
-    line = re.search(multiline,source)
+    line = re.search(multiline, source)
     while line is not None:
         start, end = line.span(1)
         assert start >= 0 and end >= 0
-        source = source[0:start] + source[end:] #remove string part that was an empty line
-        line = re.search(multiline,source)
+        source = source[0:start] + source[end:]  # remove string part that was an empty line
+        line = re.search(multiline, source)
 
-    #print "source is now: %s" % source
+    # print "source is now: %s" % source
 
     return lexer.lex(source)

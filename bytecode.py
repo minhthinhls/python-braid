@@ -1,45 +1,43 @@
+LOAD_CONST = 1
+BINARY_NEQ = 2
+PRINT = 3
+BINARY_EQ = 4
+RETURN = 5
+STORE_VARIABLE = 6
+LOAD_VARIABLE = 7
 
-LOAD_CONST          = 1
-BINARY_NEQ          = 2
-PRINT               = 3
-BINARY_EQ           = 4
-RETURN              = 5
-STORE_VARIABLE      = 6
-LOAD_VARIABLE       = 7
+JUMP = 8
+JUMP_IF_NOT_ZERO = 9
+JUMP_IF_ZERO = 10
 
-JUMP                = 8
-JUMP_IF_NOT_ZERO    = 9
-JUMP_IF_ZERO        = 10
+BINARY_ADD = 11
+BINARY_SUB = 12
+BINARY_LT = 13
+BINARY_LTE = 14
+BINARY_GT = 15
+BINARY_GTE = 16
+BINARY_AND = 17
+BINARY_OR = 18
+NOT = 19
+BINARY_MUL = 20
+BINARY_DIV = 21
+STORE_ARRAY = 22
+STORE_DICT = 23
+INDEX = 50
+CALL = 90
 
-BINARY_ADD          = 11
-BINARY_SUB          = 12
-BINARY_LT           = 13
-BINARY_LTE          = 14
-BINARY_GT           = 15
-BINARY_GTE          = 16
-BINARY_AND          = 17
-BINARY_OR           = 18
-NOT                 = 19
-BINARY_MUL          = 20
-BINARY_DIV          = 21
-STORE_ARRAY         = 22
-STORE_DICT          = 23
-INDEX               = 50
-CALL                = 90
-
-NO_ARG              = -255
-
+NO_ARG = -255
 
 reverse = {
-     1: "LOAD_CONST",
-     2: "BINARY_NEQ",
-     3: "PRINT",
-     4: "BINARY_EQ",
-     5: "RETURN",
-     6: "STORE_VARIABLE",
-     7: "LOAD_VARIABLE",
-     8: "JUMP",
-     9: "JUMP_IF_NOT_ZERO",
+    1: "LOAD_CONST",
+    2: "BINARY_NEQ",
+    3: "PRINT",
+    4: "BINARY_EQ",
+    5: "RETURN",
+    6: "STORE_VARIABLE",
+    7: "LOAD_VARIABLE",
+    8: "JUMP",
+    9: "JUMP_IF_NOT_ZERO",
     10: "JUMP_IF_ZERO",
     11: "BINARY_ADD",
     12: "BINARY_SUB",
@@ -56,12 +54,13 @@ reverse = {
     23: "STORE_DICT",
     50: "INDEX",
     90: "CALL",
-     0: "NO_ARG"
+    0: "NO_ARG"
 }
+
 
 class Bytecode(object):
     """Also plundered from Cycy"""
-    
+
     def __init__(self, instructions, arguments, constants, variables, name):
         self.instructions = instructions
         self.name = name
@@ -77,7 +76,7 @@ class Bytecode(object):
         offset = 0
         while offset < len(self.instructions):
             byte_code, arg = self.instructions[offset]
-            
+
             yield (offset, byte_code, arg)
             offset += 1
 
@@ -89,14 +88,13 @@ class Bytecode(object):
         lines.append("CONSTANTS:")
         for i, v in enumerate(self.constants):
             lines.append("%s: %s" % (i, v.to_string()))
-        
+
         lines.append("VARS:")
         for k, v in self.variables.iteritems():
             lines.append("%s: %s => %s" % (k, v.name, v.value.__class__.__name__))
-        
-        
+
         lines.append("CODE:")
-        
+
         for offset, byte_code, arg in self:
 
             name = reverse[byte_code]
@@ -111,7 +109,7 @@ class Bytecode(object):
                     line += " => " + self.constants[arg].dump()
                 elif byte_code == CALL:
                     line += " => \n" + self.variables[arg].value.dump()
-                        
+
                 elif byte_code == RETURN:
                     if arg:
                         line += " (top of stack)"
@@ -120,4 +118,3 @@ class Bytecode(object):
             lines.append(line.strip())
 
         return "\n".join(lines)
-
