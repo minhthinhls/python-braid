@@ -56,7 +56,7 @@ def program_statement_program(state, p):
     if type(p[1]) is Program:
         program = p[1]
     else:
-        program = Program(p[12])
+        program = Program(p[1])
 
     program.add_statement(p[0])
     return p[1]
